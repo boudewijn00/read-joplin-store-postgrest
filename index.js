@@ -40,7 +40,7 @@ const getNoteTags = async (noteId) => {
 }
 
 const postNote = async (note, tagNames) => {
-    const url = 'http://localhost:8000/notes'
+    const url = process.env.POSTGREST_HOST + '/notes'
     const payload = {
         note_id: note.id,
         title: note.title,

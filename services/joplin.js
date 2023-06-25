@@ -29,6 +29,7 @@ class Joplin {
         + '?token='
         + process.env.JOPLIN_TOKEN
         + '&fields=id,title,body,parent_id,created_time,order,is_todo,todo_due,todo_completed'
+        + '&order_by=created_time&order_dir=DESC'
         const response = await nodefetch(url, {
             method: 'GET',
         })

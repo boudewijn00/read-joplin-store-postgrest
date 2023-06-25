@@ -30,7 +30,6 @@ postgrestServiceObject.deleteAllNotes().then(() => {
                 notes.items.map(note => {
                     joplinServiceObject.getNoteTags(note.id).then(data => {
                         const tagNames = data.items.map(item => item.title)
-                        console.log(note)
                         postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
                     }).catch(err => console.log(err))
                 })

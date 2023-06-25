@@ -15,6 +15,14 @@ postgrestServiceObject.deleteAllTags().then(() => {
     })
 })
 
+postgrestServiceObject.deleteAllFolders().then(() => {
+    joplinServiceObject.getFolders().then(data => {
+        data.items.map(item => {
+            postgrestServiceObject.postFolder(item).catch(err => console.log(err))
+        })
+    })
+})
+
 postgrestServiceObject.deleteAllNotes().then(() => {
     joplinServiceObject.getFolders().then(data => {
         data.items.map(item => {
@@ -22,6 +30,7 @@ postgrestServiceObject.deleteAllNotes().then(() => {
                 notes.items.map(note => {
                     joplinServiceObject.getNoteTags(note.id).then(data => {
                         const tagNames = data.items.map(item => item.title)
+                        console.log(note)
                         postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
                     }).catch(err => console.log(err))
                 })

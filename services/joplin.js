@@ -14,6 +14,7 @@ class Joplin {
     async getFolders () {
         const url = 'http://localhost:41184/folders?token='
         + process.env.JOPLIN_TOKEN
+        + '&fields=user_updated_time,id,title,icon'
         const response = await nodefetch(url, {
             method: 'GET',
         })
@@ -27,7 +28,7 @@ class Joplin {
         + '/notes'
         + '?token='
         + process.env.JOPLIN_TOKEN
-        + '&fields=id,title,body,parent_id,created_time,order'
+        + '&fields=id,title,body,parent_id,created_time,order,is_todo,todo_due,todo_completed'
         const response = await nodefetch(url, {
             method: 'GET',
         })

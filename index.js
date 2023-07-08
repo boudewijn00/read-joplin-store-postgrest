@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-import nodefetch from 'node-fetch'
 import postgrestService from './services/postgrest.js'
 import joplinService from './services/joplin.js'
 
@@ -26,14 +25,21 @@ postgrestServiceObject.deleteAllFolders().then(() => {
 postgrestServiceObject.deleteAllNotes().then(() => {
     joplinServiceObject.getFolders().then(data => {
         data.items.map(item => {
-            joplinServiceObject.getFolderNotes(item.id).then(notes => {
-                notes.items.map(note => {
-                    joplinServiceObject.getNoteTags(note.id).then(data => {
-                        const tagNames = data.items.map(item => item.title)
-                        postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
-                    }).catch(err => console.log(err))
-                })
-            }).catch(err => console.log(err))
+            processFolderNotes(item.id)
         })
     }).catch(err => console.log(err))
 })
+
+function processFolderNotes(folderId, page = 1) {
+    joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
+        notes.items.map(note => {
+            joplinServiceObject.getNoteTags(note.id).then(data => {
+                const tagNames = data.items.map(item => item.title)
+                postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
+            }).catch(err => console.log(err))
+        })
+        if(notes.has_more) {
+            processFolderNotes(folderId, page + 1)
+        }
+    }).catch(err => console.log(err))
+}

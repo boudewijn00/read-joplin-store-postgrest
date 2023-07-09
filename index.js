@@ -37,7 +37,7 @@ async function processNotes () {
     postgrestServiceObject.deleteAllNotes().then(() => {
         joplinServiceObject.getFolders().then(data => {
             data.items.map(item => {
-                sleep(1000).then(() => processFolderNotes(item.id))
+                sleep(100).then(() => processFolderNotes(item.id))
             })
         }).catch(err => console.log(err))
     })

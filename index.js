@@ -45,17 +45,22 @@ async function processNotes () {
 
 async function processFolderNotes(folderId, page = 1) {
     console.log('Processing notes for folder ' + folderId + ' page ' + page)
-    sleep(100).then(() => joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
+    joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
         notes.items.map(note => {
             joplinServiceObject.getNoteTags(note.id).then(data => {
                 const tagNames = data.items.map(item => item.title)
                 postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
             }).catch(err => console.log(err))
         })
-        if(notes.has_more) {
+
+        return notes
+    }).then(notes => {
+        if (notes.has_more) {
             processFolderNotes(folderId, page + 1)
         }
-    })).catch(err => console.log(err))
+    }).then(() => {
+        console.log('finished processing notes for folder ' + folderId + ' page ' + page)
+    }).catch(err => console.log(err))
 }
 
 processTags().then(() => processFolders().then(() => processNotes()))

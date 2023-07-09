@@ -37,7 +37,7 @@ async function processNotes () {
     postgrestServiceObject.deleteAllNotes().then(() => {
         joplinServiceObject.getFolders().then(data => {
             data.items.map(item => {
-                processFolderNotes(item.id)
+                sleep(1000).then(() => processFolderNotes(item.id))
             })
         }).catch(err => console.log(err))
     })
@@ -52,7 +52,7 @@ async function processFolderNotes(folderId, page = 1) {
                 postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
             }).catch(err => console.log(err))
         })
-
+        
         return notes
     }).then(notes => {
         console.log('finished processing notes for folder ' + folderId + ' page ' + page)

@@ -6,32 +6,46 @@ const postgrestServiceObject = new postgrestService()
 const joplinServiceObject = new joplinService()
 dotenv.config();
 
-postgrestServiceObject.deleteAllTags().then(() => {
-    joplinServiceObject.getTags().then(data => {
-        data.items.map(item => {
-            postgrestServiceObject.postTag(item).catch(err => console.log(err))
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function processTags () {
+    console.log('Processing tags...')
+    postgrestServiceObject.deleteAllTags().then(() => {
+        joplinServiceObject.getTags().then(data => {
+            data.items.map(item => {
+                postgrestServiceObject.postTag(item).catch(err => console.log(err))
+            })
         })
     })
-})
+}
 
-postgrestServiceObject.deleteAllFolders().then(() => {
-    joplinServiceObject.getFolders().then(data => {
-        data.items.map(item => {
-            postgrestServiceObject.postFolder(item).catch(err => console.log(err))
+async function processFolders () {
+    console.log('Processing folders...')
+    postgrestServiceObject.deleteAllFolders().then(() => {
+        joplinServiceObject.getFolders().then(data => {
+            data.items.map(item => {
+                postgrestServiceObject.postFolder(item).catch(err => console.log(err))
+            })
         })
     })
-})
+}
 
-postgrestServiceObject.deleteAllNotes().then(() => {
-    joplinServiceObject.getFolders().then(data => {
-        data.items.map(item => {
-            processFolderNotes(item.id)
-        })
-    }).catch(err => console.log(err))
-})
+async function processNotes () {
+    console.log('Processing notes...')
+    postgrestServiceObject.deleteAllNotes().then(() => {
+        joplinServiceObject.getFolders().then(data => {
+            data.items.map(item => {
+                processFolderNotes(item.id)
+            })
+        }).catch(err => console.log(err))
+    })
+}
 
-function processFolderNotes(folderId, page = 1) {
-    joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
+async function processFolderNotes(folderId, page = 1) {
+    console.log('Processing notes for folder ' + folderId + ' page ' + page)
+    sleep(100).then(() => joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
         notes.items.map(note => {
             joplinServiceObject.getNoteTags(note.id).then(data => {
                 const tagNames = data.items.map(item => item.title)
@@ -41,5 +55,7 @@ function processFolderNotes(folderId, page = 1) {
         if(notes.has_more) {
             processFolderNotes(folderId, page + 1)
         }
-    }).catch(err => console.log(err))
+    })).catch(err => console.log(err))
 }
+
+processTags().then(() => processFolders().then(() => processNotes()))

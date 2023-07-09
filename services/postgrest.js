@@ -32,7 +32,7 @@ class Postgrest {
             tag: item.title,
         }
         const stringify = JSON.stringify(payload)
-        const response = nodefetch(url, {
+        const response = await nodefetch(url, {
             method: 'POST',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
@@ -50,7 +50,7 @@ class Postgrest {
             user_updated_time: item.user_updated_time,
         }
         const stringify = JSON.stringify(payload)
-        const response = nodefetch(url, {
+        const response = await nodefetch(url, {
             method: 'POST',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },

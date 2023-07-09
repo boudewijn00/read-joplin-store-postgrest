@@ -55,11 +55,10 @@ async function processFolderNotes(folderId, page = 1) {
 
         return notes
     }).then(notes => {
+        console.log('finished processing notes for folder ' + folderId + ' page ' + page)
         if (notes.has_more) {
             processFolderNotes(folderId, page + 1)
         }
-    }).then(() => {
-        console.log('finished processing notes for folder ' + folderId + ' page ' + page)
     }).catch(err => console.log(err))
 }
 

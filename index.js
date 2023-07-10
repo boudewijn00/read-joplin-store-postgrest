@@ -11,7 +11,6 @@ function sleep(ms) {
 }
 
 async function processTags () {
-    console.log('Processing tags...')
     postgrestServiceObject.deleteAllTags().then(() => {
         joplinServiceObject.getTags().then(data => {
             data.items.map(item => {
@@ -22,7 +21,6 @@ async function processTags () {
 }
 
 async function processFolders () {
-    console.log('Processing folders...')
     postgrestServiceObject.deleteAllFolders().then(() => {
         joplinServiceObject.getFolders().then(data => {
             data.items.map(item => {
@@ -33,7 +31,6 @@ async function processFolders () {
 }
 
 async function processNotes () {
-    console.log('Processing notes...')
     postgrestServiceObject.deleteAllNotes().then(() => {
         joplinServiceObject.getFolders().then(data => {
             data.items.map(item => {
@@ -44,7 +41,6 @@ async function processNotes () {
 }
 
 async function processFolderNotes(folderId, page = 1) {
-    console.log('Processing notes for folder ' + folderId + ' page ' + page)
     joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
         notes.items.map(note => {
             joplinServiceObject.getNoteTags(note.id).then(data => {
@@ -55,7 +51,6 @@ async function processFolderNotes(folderId, page = 1) {
         
         return notes
     }).then(notes => {
-        console.log('finished processing notes for folder ' + folderId + ' page ' + page)
         if (notes.has_more) {
             processFolderNotes(folderId, page + 1)
         }

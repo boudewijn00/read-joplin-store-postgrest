@@ -59,6 +59,22 @@ class Postgrest {
         return response
     }
 
+    async postResource (item, resource) {
+        console.log('Posting resource ' + item.id)
+        const url = process.env.POSTGREST_HOST + '/resources'
+        const payload = {
+            resource_id: item.id,
+            title: item.title,
+            contents: resource,
+        }
+        const stringify = JSON.stringify(payload)
+        const response = await nodefetch(url, {
+            method: 'POST',
+            body: stringify,
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
+        }).catch(err => console.log(err))
+    }
+
     async deleteAllTags () {
         const url = process.env.POSTGREST_HOST + '/tags'
         const response = await nodefetch(url, {
@@ -87,6 +103,14 @@ class Postgrest {
         })
 
         return response
+    }
+
+    async deleteAllResources () {
+        const url = process.env.POSTGREST_HOST + '/resources'
+        const response = await nodefetch(url, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
+        })
     }
 }
 

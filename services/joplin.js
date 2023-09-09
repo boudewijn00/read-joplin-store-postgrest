@@ -49,6 +49,30 @@ class Joplin {
     
         return response.json()
     }
+
+    async getResources () {
+        const url = 'http://localhost:41184/resources?token='
+        + process.env.JOPLIN_TOKEN
+        const response = await nodefetch(url, {
+            method: 'GET',
+        })
+
+        return response.json()
+    }
+
+    async getResource (id) {
+        const url = 'http://localhost:41184/resources/'
+        + id
+        + '/file'
+        + '?token='
+        + process.env.JOPLIN_TOKEN
+        const response = await nodefetch(url, {
+            method: 'GET',
+        })
+    
+        const buffer = await response.buffer();
+        return buffer.toString('base64');
+    }
 }
 
 export default Joplin

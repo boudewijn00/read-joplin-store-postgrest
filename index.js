@@ -62,4 +62,20 @@ async function processFolderNotes(folderId, page = 1) {
     }).catch(err => console.log(err))
 }
 
-processTags().then(() => processFolders().then(() => processNotes()))
+async function processResource () {
+    console.log('Processing resources...')
+    postgrestServiceObject.deleteAllResources().then(() => {
+        joplinServiceObject.getResources().then(data => {
+            console.log(data)
+            data.items.map(item => {
+                joplinServiceObject.getResource(item.id).then(resource => {
+                    postgrestServiceObject.postResource(item, resource).catch(err => console.log(err))
+                })
+            })
+        })
+    }).then(() => {
+        console.log('Finished processing resources')
+    })
+}
+
+processTags().then(() => processFolders().then(() => processNotes())).then(() => processResource())

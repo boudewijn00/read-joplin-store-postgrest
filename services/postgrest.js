@@ -26,6 +26,7 @@ class Postgrest {
     }
 
     async postTag (item) {
+        console.log('Posting tag ' + item.id)
         const url = process.env.POSTGREST_HOST + '/tags'
         const payload = {
             tag_id: item.id,
@@ -37,11 +38,13 @@ class Postgrest {
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
+        console.log('Posted tag ' + item.id)
 
         return response
     }
 
     async postFolder (item) {
+        console.log('Posting folder ' + item.id)
         const url = process.env.POSTGREST_HOST + '/folders'
         const payload = {
             folder_id: item.id,
@@ -55,6 +58,7 @@ class Postgrest {
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
+        console.log('Posted folder ' + item.id)
 
         return response
     }
@@ -64,7 +68,7 @@ class Postgrest {
         const url = process.env.POSTGREST_HOST + '/resources'
         
         const headers = resource.headers.raw();
-        const buffer = await resource.buffer();
+        const buffer = await resource.arrayBuffer();
 
         const payload = {
             resource_id: item.id,

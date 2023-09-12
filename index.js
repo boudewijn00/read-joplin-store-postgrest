@@ -11,30 +11,32 @@ function sleep(ms) {
 }
 
 async function processTags () {
-    postgrestServiceObject.deleteAllTags().then(() => {
-        joplinServiceObject.getTags().then(data => {
-            data.items.map(item => {
-                postgrestServiceObject.postTag(item).catch(err => console.log(err))
-            })
+    console.log('Processing tags...')
+    return await postgrestServiceObject.deleteAllTags().then(async () => {
+        await joplinServiceObject.getTags().then(async data => {
+            for (let i in data.items) {
+                await postgrestServiceObject.postTag(data.items[i]).catch(err => console.log(err))
+            }
         })
     })
 }
 
 async function processFolders () {
-    postgrestServiceObject.deleteAllFolders().then(() => {
-        joplinServiceObject.getFolders().then(data => {
-            data.items.map(item => {
-                postgrestServiceObject.postFolder(item).catch(err => console.log(err))
-            })
+    console.log('Processing folders...')
+    return await postgrestServiceObject.deleteAllFolders().then(async () => {
+        await joplinServiceObject.getFolders().then(async data => {
+            for (let i in data.items) {
+                await postgrestServiceObject.postFolder(data.items[i]).catch(err => console.log(err))
+            }
         })
     })
 }
 
 async function processNotes () {
     console.log('Processing notes...')
-    return postgrestServiceObject.deleteAllNotes().then(() => {
+    return postgrestServiceObject.deleteAllNotes().then(async () => {
         console.log('Deleted all notes')
-        return joplinServiceObject.getFolders().then(data => {
+        await joplinServiceObject.getFolders().then(data => {
             console.log('Processing ' + data.items.length + ' folders')
             let promises = [];
             for (let i in data.items){
@@ -83,6 +85,10 @@ async function processResources () {
     })
 }
 
-processNotes().then(() => {
-    processResources()
+processTags().then(() => {
+    processFolders().then(() => {
+        processNotes().then(() => {
+            processResources()
+        })
+    })
 })

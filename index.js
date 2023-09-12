@@ -31,17 +31,28 @@ async function processFolders () {
 }
 
 async function processNotes () {
-    postgrestServiceObject.deleteAllNotes().then(() => {
-        joplinServiceObject.getFolders().then(data => {
-            data.items.map(item => {
-                sleep(100).then(() => processFolderNotes(item.id))
-            })
+    console.log('Processing notes...')
+    return postgrestServiceObject.deleteAllNotes().then(() => {
+        console.log('Deleted all notes')
+        return joplinServiceObject.getFolders().then(data => {
+            console.log('Processing ' + data.items.length + ' folders')
+            let promises = [];
+            for (let i in data.items){
+                let promise = new Promise(async (resolve, reject) => {
+                    await processFolderNotes(data.items[i].id)
+                    resolve()
+                })
+                promises.push(promise);
+            }
+
+            return Promise.all(promises);
         }).catch(err => console.log(err))
     })
 }
 
 async function processFolderNotes(folderId, page = 1) {
-    joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
+    console.log('Processing folder ' + folderId + ' page ' + page)
+    return joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
         notes.items.map(note => {
             joplinServiceObject.getNoteTags(note.id).then(data => {
                 const tagNames = data.items.map(item => item.title)
@@ -50,9 +61,9 @@ async function processFolderNotes(folderId, page = 1) {
         })
         
         return notes
-    }).then(notes => {
+    }).then(async notes => {
         if (notes.has_more) {
-            processFolderNotes(folderId, page + 1)
+            await processFolderNotes(folderId, page + 1)
         }
     }).catch(err => console.log(err))
 }
@@ -61,7 +72,6 @@ async function processResource () {
     console.log('Processing resources...')
     postgrestServiceObject.deleteAllResources().then(() => {
         joplinServiceObject.getResources().then(data => {
-            console.log(data)
             data.items.map(item => {
                 joplinServiceObject.getResource(item.id).then(resource => {
                     postgrestServiceObject.postResource(item, resource).catch(err => console.log(err))
@@ -73,4 +83,6 @@ async function processResource () {
     })
 }
 
-processTags().then(() => processFolders().then(() => processNotes())).then(() => processResource())
+processNotes().then(() => {
+    console.log('Finished processing notes')
+})

@@ -77,7 +77,10 @@ class Postgrest {
             method: 'POST',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
-        }).catch(err => console.log(err))
+        })
+        console.log('Posted resource ' + item.id)
+
+        return response
     }
 
     async deleteAllTags () {

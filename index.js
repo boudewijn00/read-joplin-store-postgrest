@@ -52,7 +52,7 @@ async function processNotes () {
 
 async function processFolderNotes(folderId, page = 1) {
     console.log('Processing folder ' + folderId + ' page ' + page)
-    return joplinServiceObject.getFolderNotes(folderId, page).then(async notes => {
+    await joplinServiceObject.getFolderNotes(folderId, page).then(async notes => {
         for (let i in notes.items) {
             await joplinServiceObject.getNoteTags(notes.items[i].id).then(async data => {
                 const tagNames = data.items.map(item => notes.items[i].title)
@@ -68,15 +68,15 @@ async function processFolderNotes(folderId, page = 1) {
     }).catch(err => console.log(err))
 }
 
-async function processResource () {
+async function processResources () {
     console.log('Processing resources...')
     postgrestServiceObject.deleteAllResources().then(() => {
-        joplinServiceObject.getResources().then(data => {
-            data.items.map(item => {
-                joplinServiceObject.getResource(item.id).then(resource => {
-                    postgrestServiceObject.postResource(item, resource).catch(err => console.log(err))
+        joplinServiceObject.getResources().then(async data => {
+            for (let i in data.items) {
+                await joplinServiceObject.getResource(data.items[i].id).then(async resource => {
+                    await postgrestServiceObject.postResource(data.items[i], resource).catch(err => console.log(err))
                 })
-            })
+            }
         })
     }).then(() => {
         console.log('Finished processing resources')
@@ -84,5 +84,5 @@ async function processResource () {
 }
 
 processNotes().then(() => {
-    console.log('Finished processing notes')
+    processResources()
 })

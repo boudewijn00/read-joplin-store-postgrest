@@ -62,10 +62,15 @@ class Postgrest {
     async postResource (item, resource) {
         console.log('Posting resource ' + item.id)
         const url = process.env.POSTGREST_HOST + '/resources'
+        
+        const headers = resource.headers.raw();
+        const buffer = await resource.buffer();
+
         const payload = {
             resource_id: item.id,
             title: item.title,
-            contents: resource,
+            contents: buffer.toString('base64'),
+            mime: headers['content-type'][0],
         }
         const stringify = JSON.stringify(payload)
         const response = await nodefetch(url, {

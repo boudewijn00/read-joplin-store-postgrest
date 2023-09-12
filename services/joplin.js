@@ -69,9 +69,8 @@ class Joplin {
         const response = await nodefetch(url, {
             method: 'GET',
         })
-    
-        const buffer = await response.buffer();
-        return buffer.toString('base64');
+
+        return response;
     }
 }
 

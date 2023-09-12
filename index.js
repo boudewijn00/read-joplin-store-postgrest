@@ -52,13 +52,13 @@ async function processNotes () {
 
 async function processFolderNotes(folderId, page = 1) {
     console.log('Processing folder ' + folderId + ' page ' + page)
-    return joplinServiceObject.getFolderNotes(folderId, page).then(notes => {
-        notes.items.map(note => {
-            joplinServiceObject.getNoteTags(note.id).then(data => {
-                const tagNames = data.items.map(item => item.title)
-                postgrestServiceObject.postNote(note, tagNames).catch(err => console.log(err))
+    return joplinServiceObject.getFolderNotes(folderId, page).then(async notes => {
+        for (let i in notes.items) {
+            await joplinServiceObject.getNoteTags(notes.items[i].id).then(async data => {
+                const tagNames = data.items.map(item => notes.items[i].title)
+                await postgrestServiceObject.postNote(notes.items[i], tagNames).catch(err => console.log(err))
             }).catch(err => console.log(err))
-        })
+        }
         
         return notes
     }).then(async notes => {

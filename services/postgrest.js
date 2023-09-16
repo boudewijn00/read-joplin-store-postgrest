@@ -70,7 +70,7 @@ class Postgrest {
         const url = process.env.POSTGREST_HOST + '/resources'
         
         const headers = resource.headers.raw();
-        const buffer = await resource.arrayBuffer();
+        const buffer = await resource.buffer();
 
         const payload = {
             resource_id: item.id,

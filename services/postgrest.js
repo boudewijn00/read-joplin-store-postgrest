@@ -16,11 +16,13 @@ class Postgrest {
             todo_completed: note.todo_completed,
         }
         const stringify = JSON.stringify(payload)
+        console.log('Posting note ' + note.id)
         const response = await nodefetch(url, {
             method: 'POST',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
-        })
+        }).catch(err => console.log('Post note failed ' + stringify))
+        console.log('Posted note ' + note.id)
 
         return response
     }

@@ -57,8 +57,8 @@ async function processFolderNotes(folderId, page = 1) {
     await joplinServiceObject.getFolderNotes(folderId, page).then(async notes => {
         for (let i in notes.items) {
             await joplinServiceObject.getNoteTags(notes.items[i].id).then(async data => {
-                const tagNames = data.items.map(item => notes.items[i].title)
-                await postgrestServiceObject.postNote(notes.items[i], tagNames).catch(err => console.log(err))
+                //const tagNames = data.items.map(item => notes.items[i].title)
+                await postgrestServiceObject.postNote(notes.items[i], null).catch(err => console.log(err))
             }).catch(err => console.log(err))
         }
         

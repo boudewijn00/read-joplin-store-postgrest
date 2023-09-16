@@ -37,6 +37,20 @@ class Joplin {
     
         return response.json()
     }
+
+    async getNotes (page = 1) {
+        const url = 'http://localhost:41184/notes'
+        + '?token='
+        + process.env.JOPLIN_TOKEN
+        + '&fields=id,title,body,parent_id,created_time,order,is_todo,todo_due,todo_completed'
+        + '&order_by=created_time&order_dir=DESC'
+        + '&page=' + page
+        const response = await nodefetch(url, {
+            method: 'GET',
+        })
+
+        return response.json()
+    }
     
     async getNoteTags (noteId) {
         const url = 'http://localhost:41184/notes/'

@@ -37,7 +37,6 @@ class Postgrest {
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
-        console.log('Posted tag ' + item.id)
 
         return response
     }

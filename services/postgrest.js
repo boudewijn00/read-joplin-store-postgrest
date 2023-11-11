@@ -16,7 +16,6 @@ class Postgrest {
             todo_completed: note.todo_completed,
         }
         const stringify = JSON.stringify(payload)
-        console.log('Posting note ' + note.id)
         const response = await nodefetch(url, {
             method: 'POST',
             body: stringify,
@@ -27,7 +26,6 @@ class Postgrest {
     }
 
     async postTag (item) {
-        console.log('Posting tag ' + item.id)
         const url = process.env.POSTGREST_HOST + '/tags'
         const payload = {
             tag_id: item.id,
@@ -45,7 +43,6 @@ class Postgrest {
     }
 
     async postFolder (item) {
-        console.log('Posting folder ' + item.id)
         const url = process.env.POSTGREST_HOST + '/folders'
         const payload = {
             folder_id: item.id,
@@ -59,13 +56,11 @@ class Postgrest {
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
-        console.log('Posted folder ' + item.id)
 
         return response
     }
 
     async postResource (item, resource) {
-        console.log('Posting resource ' + item.id)
         const url = process.env.POSTGREST_HOST + '/resources'
         
         const headers = resource.headers.raw();
@@ -83,7 +78,6 @@ class Postgrest {
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
-        console.log('Posted resource ' + item.id)
 
         return response
     }
@@ -108,13 +102,11 @@ class Postgrest {
     }
 
     async deleteAllFolders () {
-        console.log('Deleting all folders')
         const url = process.env.POSTGREST_HOST + '/folders'
         const response = await nodefetch(url, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
-        console.log('Deleted all folders')
 
         return response
     }
@@ -130,13 +122,11 @@ class Postgrest {
     }
     
     async deleteAllNotes () {
-        console.log('Deleting all notes')
         const url = process.env.POSTGREST_HOST + '/notes'
         const response = await nodefetch(url, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
-        console.log('Deleted all notes')
     
         return response
     }

@@ -67,7 +67,6 @@ postgrestServiceObject.deleteAll().then(async () => {
 })
 
 async function processFolderNotes(folderId, page = 1) {
-    console.log('Processing folder ' + folderId + ' page ' + page)
     await joplinServiceObject.getFolderNotes(folderId, page).then(async notes => {
         let promises = [];
         for (let i in notes.items) {

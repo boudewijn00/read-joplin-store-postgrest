@@ -1,7 +1,7 @@
 import nodefetch from 'node-fetch'
 
 class Postgrest {
-    async postNote (note, tagNames) {
+    async postNote (note, tagNames, parsedLink) {
         const url = process.env.POSTGREST_HOST + '/notes'
         const payload = {
             note_id: note.id,
@@ -14,13 +14,14 @@ class Postgrest {
             is_todo: note.is_todo,
             todo_due: note.todo_due,
             todo_completed: note.todo_completed,
+            excerpt: parsedLink ? parsedLink.excerpt : null,
         }
         const stringify = JSON.stringify(payload)
         const response = await nodefetch(url, {
             method: 'POST',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
-        }).catch(err => console.log('Post note failed ' + stringify))
+        }).catch(err => console.log(err))
 
         return response
     }

@@ -1,9 +1,11 @@
 import dotenv from 'dotenv'
 import postgrestService from './services/postgrest.js'
 import joplinService from './services/joplin.js'
+import parseLinkService from './services/parseLink.js'
 
 const postgrestServiceObject = new postgrestService()
 const joplinServiceObject = new joplinService()
+const parseLinkServiceObject = new parseLinkService()
 dotenv.config();
 
 function sleep(ms) {
@@ -73,7 +75,9 @@ async function processFolderNotes(folderId, page = 1) {
             let promise = new Promise(async (resolve, reject) => {
                 await joplinServiceObject.getNoteTags(notes.items[i].id).then(async tags => {
                     const tagNames = tags.items.map(tag => tag.title)
-                    await postgrestServiceObject.postNote(notes.items[i], tagNames)
+                    //await parseLinkServiceObject.parseLink(notes.items[i].body).then(async result => {
+                        await postgrestServiceObject.postNote(notes.items[i], tagNames, null)    
+                    //})
                 })
                 resolve()
             })

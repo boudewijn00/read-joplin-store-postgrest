@@ -1,4 +1,4 @@
-import nodefetch, { AbortError } from 'node-fetch'
+import nodefetch from 'node-fetch'
 import jsdom from 'jsdom'
 const { JSDOM } = jsdom
 import {Readability, isProbablyReaderable} from '@mozilla/readability'
@@ -10,7 +10,7 @@ class ParseLink {
     const controller = new AbortController();
     const timeout = setTimeout(() => {
 	    controller.abort();
-    }, 1500);
+    }, 250);
 
     try {    
       url = new URL(url)
@@ -23,7 +23,6 @@ class ParseLink {
       });
 
       if(!isProbablyReaderable(doc.window.document)) {
-        console.log("Not readable");
         return;
       }
 
@@ -33,12 +32,8 @@ class ParseLink {
       return result;
     }
 
-    catch (err) {
-      if (err instanceof AbortError) {
-        console.log(err.message);
-      }
-      
-      return null
+    catch (err) {      
+      return;
     }
 
     finally {

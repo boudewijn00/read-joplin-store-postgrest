@@ -1,7 +1,7 @@
 import nodefetch from 'node-fetch'
 
 class Postgrest {
-    async postNote (note, tagNames, parsedLink) {
+    async postNote (note, tagNames) {
         const url = process.env.POSTGREST_HOST + '/notes'
         const payload = {
             note_id: note.id,
@@ -13,12 +13,38 @@ class Postgrest {
             tags: tagNames ? tagNames : [],
             is_todo: note.is_todo,
             todo_due: note.todo_due,
-            todo_completed: note.todo_completed,
-            excerpt: parsedLink ? parsedLink.excerpt : null,
+            todo_completed: note.todo_completed
         }
         const stringify = JSON.stringify(payload)
         const response = await nodefetch(url, {
             method: 'POST',
+            body: stringify,
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
+        }).catch(err => console.log(err))
+
+        return response
+    }
+
+    async patchNote (note, parsedLink) {
+        const url = process.env.POSTGREST_HOST + '/notes?id=eq.' + note.id
+        const payload = {
+            note_id: note.note_id,
+            title: note.title,
+            body: note.body,
+            parent_id: note.parent_id,
+            created_time: note.created_time,
+            order_id: note.order,
+            tags: note.tags,
+            is_todo: note.is_todo,
+            todo_due: note.todo_due,
+            todo_completed: note.todo_completed,
+            link_length: parsedLink.length,
+            link_excerpt: parsedLink.excerpt,
+            link_by_line: parsedLink.byline,
+        }
+        const stringify = JSON.stringify(payload)
+        const response = await nodefetch(url, {
+            method: 'PATCH',
             body: stringify,
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         }).catch(err => console.log(err))
@@ -137,6 +163,16 @@ class Postgrest {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
         })
+    }
+
+    async getNotesNotEquelToParentId (parent_id) {
+        const url = process.env.POSTGREST_HOST + '/notes?parent_id=not.eq.' + parent_id
+        const response = await nodefetch(url, {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + process.env.POSTGREST_TOKEN },
+        })
+
+        return response.json()
     }
 }
 
